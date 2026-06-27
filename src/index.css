@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg-color: rgba(10, 10, 15, 0.7);
+  --border-color: rgba(0, 242, 254, 0.2);
+  --accent-cyan: #00f2fe;
+  --accent-pink: #ff007f;
+  --accent-purple: #7f00ff;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --glow-cyan: 0 0 12px rgba(0, 242, 254, 0.4);
+  --glow-pink: 0 0 12px rgba(255, 0, 127, 0.4);
+  --font-hud: 'Share Tech Mono', monospace;
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  user-select: none;
+}
+
+/* Glassmorphism Panels */
+.hud-panel {
+  background: var(--bg-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 
+              0 0 20px rgba(0, 242, 254, 0.05),
+              inset 0 0 12px rgba(255, 255, 255, 0.03);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hud-panel:hover {
+  border-color: rgba(0, 242, 254, 0.35);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 
+              0 0 25px rgba(0, 242, 254, 0.1),
+              inset 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+/* Header Text Styles */
+.hud-title {
+  font-family: var(--font-hud);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  text-shadow: var(--glow-cyan);
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px dashed rgba(0, 242, 254, 0.2);
+  padding-bottom: 8px;
+}
+
+/* Cyberpunk Sliders */
+.cyber-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  margin: 10px 0;
+  position: relative;
+}
+
+.cyber-range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.cyber-range::-webkit-slider-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  box-shadow: var(--glow-cyan);
+  transition: all 0.2s ease;
+}
+
+.cyber-range::-webkit-slider-thumb:hover {
+  background: #fff;
+  transform: scale(1.2);
+  box-shadow: 0 0 16px var(--accent-cyan);
+}
+
+.cyber-range-pink::-webkit-slider-thumb {
+  background: var(--accent-pink);
+  box-shadow: var(--glow-pink);
+}
+
+.cyber-range-pink::-webkit-slider-thumb:hover {
+  background: #fff;
+  transform: scale(1.2);
+  box-shadow: 0 0 16px var(--accent-pink);
+}
+
+/* Custom Checkbox / Toggle */
+.cyber-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.cyber-toggle-label {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.cyber-toggle-switch {
+  width: 36px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cyber-toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-toggle.active .cyber-toggle-switch {
+  background: rgba(0, 242, 254, 0.2);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+}
+
+.cyber-toggle.active .cyber-toggle-switch::after {
+  left: 18px;
+  background: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Cyber Buttons */
+.cyber-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cyber-btn:hover {
+  background: rgba(0, 242, 254, 0.1);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-1px);
+}
+
+.cyber-btn:active {
+  transform: translateY(1px);
+}
+
+.cyber-btn-active {
+  background: rgba(0, 242, 254, 0.15) !important;
+  border-color: var(--accent-cyan) !important;
+  color: var(--accent-cyan) !important;
+  box-shadow: var(--glow-cyan);
+}
+
+.cyber-btn-pink {
+  background: rgba(255, 0, 127, 0.05);
+}
+
+.cyber-btn-pink:hover {
+  background: rgba(255, 0, 127, 0.15);
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+  box-shadow: var(--glow-pink);
+}
+
+/* Dropdown Selector */
+.cyber-select {
+  background: rgba(10, 10, 15, 0.9);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cyber-select:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Playback Controls Progress Bar */
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.progress-bar-container:hover {
+  height: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+  width: 0%;
+  box-shadow: 0 0 10px var(--accent-cyan);
+  transition: width 0.1s linear;
+}
+
+.progress-bar-handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fff, var(--glow-cyan);
+  display: none;
+  pointer-events: none;
+}
+
+.progress-bar-container:hover .progress-bar-handle {
+  display: block;
+}
+
+/* Custom Scrollbars */
+.hud-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hud-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hud-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.2);
+  border-radius: 2px;
+}
+
+.hud-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  display: inline-block;
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+.pulse-indicator-pink {
+  background-color: var(--accent-pink);
+  box-shadow: var(--glow-pink);
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+/* File Drag & Drop Hover Overlay */
+.dropzone-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  border: 4px dashed var(--accent-cyan);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Layout Utilities */
+.hud-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-gap-10 {
+  gap: 10px;
+}
+
+.hud-gap-15 {
+  gap: 15px;
+}
+
+.hud-mt-15 {
+  margin-top: 15px;
+}
+
+.hud-label {
+  font-family: var(--font-hud);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-family: var(--font-hud);
+  font-size: 0.9rem;
+  color: var(--accent-cyan);
+}
