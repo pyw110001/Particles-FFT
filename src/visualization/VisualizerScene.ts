@@ -7,7 +7,7 @@ import { ParticleSystem, ParticleSystemSettings, ParticleQuality } from './Parti
 import { AudioAnalysisData } from '../audio/AudioEngine';
 
 export interface VisualizerSceneSettings extends ParticleSystemSettings {
-  mode: 'sphere' | 'tunnel' | 'waveform' | 'evileye';
+  mode: 'threads' | 'tunnel' | 'waveform' | 'evileye';
   particleQuality: ParticleQuality;
   autoRotateCamera: boolean;
   bloomEnabled: boolean;
@@ -152,8 +152,8 @@ export class VisualizerScene {
   }
 
   // Target Mode mapping
-  private updateTargetMode(mode: 'sphere' | 'tunnel' | 'waveform') {
-    if (mode === 'sphere') this.targetMode = 0.0;
+  private updateTargetMode(mode: 'threads' | 'tunnel' | 'waveform') {
+    if (mode === 'threads') this.targetMode = 0.0;
     else if (mode === 'tunnel') this.targetMode = 1.0;
     else if (mode === 'waveform') this.targetMode = 2.0;
   }
@@ -187,7 +187,7 @@ export class VisualizerScene {
         this.initParticlesForQuality(settings.particleQuality);
       }
 
-      if (settings.mode === 'evileye') {
+      if (settings.mode === 'evileye' || settings.mode === 'threads') {
         return;
       }
 
@@ -215,13 +215,6 @@ export class VisualizerScene {
           this.camera.position.x = Math.sin(this.autoRotationAngle) * radius;
           this.camera.position.z = Math.cos(this.autoRotationAngle) * radius;
           this.camera.position.y = 5.0 + Math.sin(this.autoRotationAngle * 0.5) * 2.0;
-          this.camera.lookAt(0, 0, 0);
-        } else if (settings.mode === 'sphere') {
-          // Orbiting sphere
-          const radius = 8.0 + (audioData ? audioData.bass * 0.5 : 0.0);
-          this.camera.position.x = Math.sin(this.autoRotationAngle) * radius;
-          this.camera.position.z = Math.cos(this.autoRotationAngle) * radius;
-          this.camera.position.y = Math.cos(this.autoRotationAngle * 0.5) * 2.0;
           this.camera.lookAt(0, 0, 0);
         } else {
           // Tunnel mode: Keep camera centered looking straight down the Z tube, with slight banking

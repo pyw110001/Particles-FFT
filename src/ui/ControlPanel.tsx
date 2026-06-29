@@ -18,7 +18,7 @@ const translations = {
     hideUI: '隐藏界面',
     visualStyle: '视觉模式与样式',
     renderMode: '渲染几何模式',
-    sphere: 'Sphere (呼吸粒子球)',
+    threads: 'Threads (炫彩声波光缕)',
     tunnel: 'Tunnel (回旋穿梭隧道)',
     waveform: 'Waveform (时空声波场)',
     evileye: 'EvilEye (恶魔火焰之眼)',
@@ -51,7 +51,7 @@ const translations = {
     hideUI: 'Hide UI',
     visualStyle: 'Visual Modes & Style',
     renderMode: 'Render Mode',
-    sphere: 'Sphere (Breathing Sphere)',
+    threads: 'Threads (Vibrant Waves)',
     tunnel: 'Tunnel (Infinite Space)',
     waveform: 'Waveform (Terrain Field)',
     evileye: 'EvilEye (Demonic Flame)',
@@ -167,7 +167,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 value={settings.mode}
                 onChange={e => onChange({ mode: e.target.value as any })}
               >
-                <option value="sphere">{t.sphere}</option>
+                <option value="threads">{t.threads}</option>
                 <option value="tunnel">{t.tunnel}</option>
                 <option value="waveform">{t.waveform}</option>
                 <option value="evileye">{t.evileye}</option>

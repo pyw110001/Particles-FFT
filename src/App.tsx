@@ -3,6 +3,7 @@ import { AudioEngine } from './audio/AudioEngine';
 import { VisualizerScene, VisualizerSceneSettings } from './visualization/VisualizerScene';
 import { HUDLayout } from './ui/HUDLayout';
 import EvilEye from './visualization/EvilEye';
+import Threads from './visualization/Threads';
 
 export const App: React.FC = () => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -14,7 +15,7 @@ export const App: React.FC = () => {
 
   // Settings state management
   const [settings, setSettings] = useState<VisualizerSceneSettings>({
-    mode: 'sphere',
+    mode: 'threads',
     particleQuality: 'medium',
     intensity: 1.0,
     pointSize: 3.0,
@@ -32,7 +33,8 @@ export const App: React.FC = () => {
   // Keep setting values synced with window globally for Three.js render thread to read synchronously
   useEffect(() => {
     (window as any).visualizerSettings = settings;
-  }, [settings]);
+    visualizerScene.resize();
+  }, [settings, visualizerScene]);
 
   useEffect(() => {
     if (!canvasContainerRef.current) return;
@@ -83,7 +85,9 @@ export const App: React.FC = () => {
           top: 0, 
           left: 0, 
           zIndex: 1,
-          display: settings.mode !== 'evileye' ? 'block' : 'none'
+          opacity: (settings.mode !== 'evileye' && settings.mode !== 'threads') ? 1 : 0,
+          pointerEvents: (settings.mode !== 'evileye' && settings.mode !== 'threads') ? 'auto' : 'none',
+          transition: 'opacity 0.3s ease'
         }} 
       />
 
@@ -98,6 +102,15 @@ export const App: React.FC = () => {
         irisWidth={0.2}
         glowIntensity={0.25}
         scale={0.8}
+      />
+
+      {/* Threads visualizer */}
+      <Threads
+        isActive={settings.mode === 'threads'}
+        audioEngine={audioEngine}
+        amplitude={5}
+        distance={0.7}
+        enableMouseInteraction={false}
       />
 
       {/* Custom Cyberpunk HUD Panels Overlay */}

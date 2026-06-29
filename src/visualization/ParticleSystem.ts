@@ -30,6 +30,7 @@ export class ParticleSystem {
   private shockwaveProgress = 1.0;
   private beatStrength = 0.0;
   private totalTime = 0.0;
+  private smoothBass = 0.0;
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
@@ -121,6 +122,7 @@ export class ParticleSystem {
       uTreble: { value: 0.0 },
       
       uBeat: { value: 0.0 },
+      uSmoothBass: { value: 0.0 },
       uBeatStrength: { value: 0.0 },
       uShockwave: { value: 1.0 }, // starts finished
       
@@ -165,6 +167,12 @@ export class ParticleSystem {
     uniforms.uColorMode.value = settings.colorMode;
     uniforms.uIntensity.value = settings.intensity;
     uniforms.uPointSize.value = settings.pointSize;
+
+    // Calculate smoothBass with easing (lerp)
+    const targetBass = audioData ? audioData.bass * settings.bassBoost : (0.1 * Math.sin(this.totalTime * 0.5) + 0.15);
+    const lerpFactor = Math.min(1.0, deltaTime * 5.0); // smooth tracking
+    this.smoothBass += (targetBass - this.smoothBass) * lerpFactor;
+    uniforms.uSmoothBass.value = this.smoothBass;
 
     // Update audio data uniforms
     if (audioData) {

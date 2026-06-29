@@ -263,9 +263,18 @@ export default function EvilEye({
 
     let animationFrameId: number;
     let beatPulse = 0.0;
+    let lastTime = performance.now();
+
+    // Smooth tracking states
+    let smoothVol = 0.08;
+    let smoothBass = 0.15;
+    let smoothMid = 0.08;
+    let smoothTreble = 0.03;
 
     function update(time: number) {
       animationFrameId = requestAnimationFrame(update);
+      const deltaTime = Math.min(50.0, time - lastTime); // clamp to prevent jumps on page resume
+      lastTime = time;
       
       mouse.x += (mouse.tx - mouse.x) * 0.05;
       mouse.y += (mouse.ty - mouse.y) * 0.05;
@@ -274,36 +283,49 @@ export default function EvilEye({
       const timeSecs = time * 0.001;
       program.uniforms.uTime.value = timeSecs;
 
+      let targetVol = 0.0;
+      let targetBass = 0.0;
+      let targetMid = 0.0;
+      let targetTreble = 0.0;
+
       if (audioEngine) {
         const audioData = audioEngine.getAnalysisData(time);
         if (audioData) {
-          const vol = audioData.volume;
-          const bass = audioData.bass;
-          const mid = audioData.mid;
-          const treble = audioData.treble;
+          targetVol = audioData.volume;
+          targetBass = audioData.bass;
+          targetMid = audioData.mid;
+          targetTreble = audioData.treble;
 
-          // Bass modulates eye zoom (heartbeat breathing effect)
-          program.uniforms.uScale.value = scale * (1.0 + bass * 0.28);
-          
-          // Overall volume modulates intensity & brightness
-          program.uniforms.uIntensity.value = intensity * (0.8 + vol * 2.0);
-
-          // Treble modulates flame flicker speed
-          program.uniforms.uFlameSpeed.value = flameSpeed * (0.9 + treble * 1.5);
-
-          // Mid modulates iris thickness
-          program.uniforms.uIrisWidth.value = irisWidth * (0.9 + mid * 0.4);
-
-          // Beat detected contracts/dilates the pupil slit dynamically
           if (audioData.beatDetected) {
             beatPulse = 1.0;
           } else {
-            beatPulse += (0.0 - beatPulse) * 0.15;
+            // Frame-rate independent decay for the beat dilation pulse
+            beatPulse += (0.0 - beatPulse) * Math.min(1.0, deltaTime * 0.008);
           }
-          
-          program.uniforms.uPupilSize.value = pupilSize * (1.0 + beatPulse * 0.6);
         }
       }
+
+      // Smooth tracking factor (~10% per frame at 60fps, frame-rate independent)
+      const lerpFactor = Math.min(1.0, deltaTime * 0.006);
+      smoothVol += (targetVol - smoothVol) * lerpFactor;
+      smoothBass += (targetBass - smoothBass) * lerpFactor;
+      smoothMid += (targetMid - smoothMid) * lerpFactor;
+      smoothTreble += (targetTreble - smoothTreble) * lerpFactor;
+
+      // Bass modulates eye zoom (heartbeat breathing effect, smoothed)
+      program.uniforms.uScale.value = scale * (1.0 + smoothBass * 0.28);
+      
+      // Overall volume modulates intensity & brightness (smoothed)
+      program.uniforms.uIntensity.value = intensity * (0.8 + smoothVol * 2.0);
+
+      // Treble modulates flame flicker speed (smoothed)
+      program.uniforms.uFlameSpeed.value = flameSpeed * (0.9 + smoothTreble * 1.5);
+
+      // Mid modulates iris thickness (smoothed)
+      program.uniforms.uIrisWidth.value = irisWidth * (0.9 + smoothMid * 0.4);
+
+      // Beat detected contracts/dilates the pupil slit dynamically (smoothed)
+      program.uniforms.uPupilSize.value = pupilSize * (1.0 + beatPulse * 0.6);
 
       renderer.render({ scene: mesh });
     }

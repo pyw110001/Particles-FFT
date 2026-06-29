@@ -14,6 +14,7 @@ export const vertexShader = `
   uniform float uIntensity;
   uniform float uPointSize;
   uniform float uColorMode;
+  uniform float uSmoothBass;
   uniform float uMode; // 0: Sphere, 1: Tunnel, 2: Waveform (interpolated)
   
   uniform sampler2D uAudioTexture; // 1D audio data texture
@@ -57,19 +58,45 @@ export const vertexShader = `
     float waveProgress = sin(uShockwave * 3.14159265);
     posSphere += normalize(aBasePosition) * waveProgress * uBeatStrength * 1.5;
     
-    // --- MODE 1: Tunnel Position ---
-    float angle = atan(aBasePosition.y, aBasePosition.x);
+    // --- MODE 1: Tunnel Position (Spiral Vortex Filaments) ---
+    float armCount = 40.0;
+    float armIndex = floor(aRandom * armCount);
+    float armAngle = armIndex * (6.2831853 / armCount);
+    
     float zVal = aBasePosition.z * 18.0;
-    // Infinite looping along Z
-    zVal = mod(zVal - uTime * 4.0, 36.0) - 18.0;
-    // Radius of tunnel, modulated by bass
-    float tunnelRadius = 2.5 + sin(zVal * 0.3 + uTime * 2.0) * 0.4 * uBass;
-    // Twist/spin tunnel based on mid
-    float spin = angle + uTime * 0.15 + sin(zVal * 0.1) * uMid * 0.6;
+    // Infinite looping along Z (fly-through speed scales with bass/volume)
+    zVal = mod(zVal - uTime * (3.0 + uBass * 2.0), 36.0) - 18.0;
+    
+    // Normalize Z position to [0.0, 1.0] (0.0 is deep center, 1.0 is screen front)
+    float depthFactor = (zVal + 18.0) / 36.0;
+    
+    // Extremely narrow spread to form distinct, sharp filaments/strands of beads
+    float spread = (fract(aRandom * armCount) - 0.5) * 0.04;
+    
+    // Non-linear spiral twist: winds tighter towards the center, modulated by bass
+    float twist = (1.0 - pow(depthFactor, 0.75)) * (6.5 + uBass * 1.8);
+    float spin = armAngle + twist + spread - uTime * 0.45;
+    
+    // Black hole size modulated by smoothed bass (dynamic breathing center)
+    float blackHoleSize = 0.35 + uSmoothBass * 1.5;
+    // Funnel shape radius (narrow at the center, wide at the camera)
+    float tunnelRadius = blackHoleSize + pow(depthFactor, 1.8) * (5.5 - blackHoleSize);
+    
+    // Pulse waves traveling down the filaments driven by bass
+    tunnelRadius += sin(zVal * 1.0 - uTime * 5.0) * 0.12 * uBass;
     
     vec3 posTunnel = vec3(cos(spin) * tunnelRadius, sin(spin) * tunnelRadius, zVal);
-    // Expand tunnel on beat
-    posTunnel.xy += vec2(cos(spin), sin(spin)) * waveProgress * uBeatStrength * 1.2;
+    
+    // Turbulence noise effect for surrounding particles (stronger at outer edges, zero at center)
+    float turbStrength = depthFactor * 0.55 * (0.8 + uBass * 1.2);
+    vec3 turbNoiseInput = posTunnel * 0.7 + vec3(uTime * 0.3, -uTime * 0.2, uTime * 0.4);
+    float nX = noise(turbNoiseInput);
+    float nY = noise(turbNoiseInput + vec3(12.3, 45.6, 78.9));
+    float nZ = noise(turbNoiseInput - vec3(23.4, 56.7, 89.0));
+    posTunnel += vec3(nX - 0.5, nY - 0.5, nZ - 0.5) * turbStrength;
+    
+    // Expand funnel on beat
+    posTunnel.xy += vec2(cos(spin), sin(spin)) * waveProgress * uBeatStrength * 1.1;
     
     // --- MODE 2: Waveform Field Position ---
     // Grid on XZ plane
